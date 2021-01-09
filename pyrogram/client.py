@@ -183,6 +183,7 @@ class Client(Methods, Scaffold):
         device_model: str = None,
         system_version: str = None,
         lang_code: str = None,
+        lang_pack: str = None,
         ipv6: bool = False,
         proxy: dict = None,
         test_mode: bool = False,
@@ -210,6 +211,7 @@ class Client(Methods, Scaffold):
         self.device_model = device_model
         self.system_version = system_version
         self.lang_code = lang_code
+        self.lang_pack = lang_pack
         self.ipv6 = ipv6
         # TODO: Make code consistent, use underscore for private/protected fields
         self._proxy = proxy
