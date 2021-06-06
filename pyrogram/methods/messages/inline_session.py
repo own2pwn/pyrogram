@@ -25,26 +25,22 @@ from pyrogram.session import Session
 from pyrogram.session.auth import Auth
 
 lock = Lock()
-session = None
-dest_dc_id = 4
+sessions = {}
 
 
 async def get_session(client: "pyrogram.Client", dc_id: int):
-    if dc_id != dest_dc_id:
-        return client
-
     if dc_id == await client.storage.dc_id():
         return client
 
     async with lock:
-        global session
+        global sessions
 
-        if session is not None:
-            return session
+        if sessions.get(dc_id):
+            return sessions[dc_id]
 
-        session = Session(
-            client, dest_dc_id,
-            await Auth(client, dest_dc_id, False).create(),
+        session = sessions[dc_id] = Session(
+            client, dc_id,
+            await Auth(client, dc_id, False).create(),
             False, is_media=True
         )
 
@@ -53,7 +49,7 @@ async def get_session(client: "pyrogram.Client", dc_id: int):
         for _ in range(3):
             exported_auth = await client.send(
                 raw.functions.auth.ExportAuthorization(
-                    dc_id=dest_dc_id
+                    dc_id=dc_id
                 )
             )
 
